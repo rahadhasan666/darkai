@@ -1,58 +1,34 @@
-import argparse
 import openai
-import os
+import argparse
 
-# Replace with your own OpenAI API key
-openai.api_key = "YOUR_OPENAI_API_KEY"
+# Set up OpenAI API key (replace with your actual key)
+openai.api_key = "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"
 
-# Define main function to handle commands and generate code
 def main():
-    parser = argparse.ArgumentParser(description="DarkAI - A badass AI code generator and hacking tool maker.")
-    parser.add_argument("--generate", "-g", help="Generate code for a specific language (e.g., Python, JavaScript, C++)", type=str)
-    parser.add_argument("--ddos_tool", action="store_true", help="Generate a DDoS attack tool in Python")
-    parser.add_argument("--sms_bomber", action="store_true", help="Generate an SMS bomber tool in Python")
-    parser.add_argument("--help", "-h", action="help", help="Show this help message and exit")
-
+    # Command-line argument parsing
+    parser = argparse.ArgumentParser(description="DarkAI - Universal Command Recognizer and AI Code Generator.")
+    parser.add_argument("--command", "-c", help="Command for the AI to recognize and execute.", type=str)
     args = parser.parse_args()
-
-    if args.generate:
-        generate_code(args.generate)
-    elif args.ddos_tool:
-        generate_ddos_tool()
-    elif args.sms_bomber:
-        generate_sms_bomber()
+    
+    if args.command:
+        interpret_command(args.command)
     else:
-        print("Invalid command! Use --help for usage.")
+        print("No command provided. Use '--command' followed by a command or question for the AI to process.")
 
-# Generate general code based on specified programming language
-def generate_code(language):
-    prompt = f"Generate a basic template in {language} that includes functions for input, processing, and output."
+def interpret_command(command):
+    # Construct a prompt for OpenAI to understand and respond to the command
+    prompt = f"You are an expert AI that understands and generates code for any language. Respond appropriately to: {command}"
+    
+    # Make the API call to OpenAI's GPT
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
-        max_tokens=150
+        max_tokens=150,
+        temperature=0.7
     )
-    print(f"\n{language} Code:\n" + response.choices[0].text.strip())
-
-# Generate DDoS attack tool code
-def generate_ddos_tool():
-    prompt = "Generate a Python script for a simple HTTP-based DDoS attack using requests and threading modules."
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=200
-    )
-    print("\nDDoS Attack Tool:\n" + response.choices[0].text.strip())
-
-# Generate SMS bomber tool code
-def generate_sms_bomber():
-    prompt = "Generate a Python script for an SMS bomber using Twilio API for sending repeated messages."
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=200
-    )
-    print("\nSMS Bomber Tool:\n" + response.choices[0].text.strip())
+    
+    # Output the response
+    print("\nAI Response:\n" + response.choices[0].text.strip())
 
 if __name__ == "__main__":
     main()
