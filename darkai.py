@@ -1,133 +1,58 @@
-# Save this script as darkai.py
-import random
+import argparse
+import openai
+import os
 
-def generate_code(language, task):
-    # Example responses for various languages and tasks
-    code_snippets = {
-        "python": {
-            "calculator": """
-def calculator():
-    operation = input("Enter operation (+, -, *, /): ")
-    num1 = float(input("Enter first number: "))
-    num2 = float(input("Enter second number: "))
+# Replace with your own OpenAI API key
+openai.api_key = "YOUR_OPENAI_API_KEY"
 
-    if operation == '+':
-        print(num1 + num2)
-    elif operation == '-':
-        print(num1 - num2)
-    elif operation == '*':
-        print(num1 * num2)
-    elif operation == '/':
-        print(num1 / num2)
-    else:
-        print("Invalid operation")
-calculator()
-            """,
-            "fibonacci": """
-def fibonacci(n):
-    a, b = 0, 1
-    while a < n:
-        print(a, end=' ')
-        a, b = b, a + b
-fibonacci(10)
-            """
-        },
-        "html": {
-            "login_form": """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login Form</title>
-</head>
-<body>
-    <form action="/login" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-</body>
-</html>
-            """,
-            "table": """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sample Table</title>
-</head>
-<body>
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-        </tr>
-        <tr>
-            <td>John</td>
-            <td>30</td>
-        </tr>
-        <tr>
-            <td>Jane</td>
-            <td>25</td>
-        </tr>
-    </table>
-</body>
-</html>
-            """
-        },
-        "javascript": {
-            "alert_button": """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Alert Button</title>
-</head>
-<body>
-    <button onclick="showAlert()">Click Me</button>
-
-    <script>
-        function showAlert() {
-            alert("Hello, this is an alert!");
-        }
-    </script>
-</body>
-</html>
-            """
-        },
-        "css": {
-            "basic_style": """
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-h1 {
-    color: #0056b3;
-}
-            """
-        }
-    }
-    
-    # Select a code snippet based on language and task
-    return code_snippets.get(language, {}).get(task, "Sorry, I don't have that code snippet.")
-
+# Define main function to handle commands and generate code
 def main():
-    print("Welcome to DarkAI Code Generator!")
-    print("You can generate code in Python, HTML, JavaScript, CSS.")
-    
-    while True:
-        language = input("Enter the language (python, html, javascript, css) or 'quit' to exit: ").lower()
-        if language == 'quit':
-            break
-        task = input(f"What type of {language} code would you like to generate? ").lower()
-        
-        code = generate_code(language, task)
-        print("\nGenerated Code:\n")
-        print(code)
-        print("\n")
+    parser = argparse.ArgumentParser(description="DarkAI - A badass AI code generator and hacking tool maker.")
+    parser.add_argument("--generate", "-g", help="Generate code for a specific language (e.g., Python, JavaScript, C++)", type=str)
+    parser.add_argument("--ddos_tool", action="store_true", help="Generate a DDoS attack tool in Python")
+    parser.add_argument("--sms_bomber", action="store_true", help="Generate an SMS bomber tool in Python")
+    parser.add_argument("--help", "-h", action="help", help="Show this help message and exit")
+
+    args = parser.parse_args()
+
+    if args.generate:
+        generate_code(args.generate)
+    elif args.ddos_tool:
+        generate_ddos_tool()
+    elif args.sms_bomber:
+        generate_sms_bomber()
+    else:
+        print("Invalid command! Use --help for usage.")
+
+# Generate general code based on specified programming language
+def generate_code(language):
+    prompt = f"Generate a basic template in {language} that includes functions for input, processing, and output."
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=150
+    )
+    print(f"\n{language} Code:\n" + response.choices[0].text.strip())
+
+# Generate DDoS attack tool code
+def generate_ddos_tool():
+    prompt = "Generate a Python script for a simple HTTP-based DDoS attack using requests and threading modules."
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=200
+    )
+    print("\nDDoS Attack Tool:\n" + response.choices[0].text.strip())
+
+# Generate SMS bomber tool code
+def generate_sms_bomber():
+    prompt = "Generate a Python script for an SMS bomber using Twilio API for sending repeated messages."
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=200
+    )
+    print("\nSMS Bomber Tool:\n" + response.choices[0].text.strip())
 
 if __name__ == "__main__":
     main()
